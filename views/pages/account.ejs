@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<% const a = currentUser.defaultAddress || {}; %>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-10">
+  <h1 class="font-serif text-5xl mb-2">My account</h1>
+  <p class="text-sm text-neutral-500 mb-8"><%= currentUser.email %></p>
+
+  <form id="account-form" class="space-y-5" novalidate>
+    <h2 class="font-medium">Profile</h2>
+    <div class="grid sm:grid-cols-2 gap-5">
+      <div><label class="block text-sm mb-1.5" for="a-name">Full name</label>
+        <input id="a-name" name="name" required value="<%= currentUser.name %>" class="field"></div>
+      <div><label class="block text-sm mb-1.5" for="a-phone">Phone</label>
+        <input id="a-phone" name="phone" value="<%= currentUser.phone || '' %>" class="field"></div>
+    </div>
+
+    <h2 class="font-medium pt-4">Saved address</h2>
+    <div class="grid sm:grid-cols-2 gap-5" id="address-fields">
+      <div class="sm:col-span-2"><label class="block text-sm mb-1.5">Recipient name</label><input name="addr_name" value="<%= a.name || '' %>" class="field"></div>
+      <div class="sm:col-span-2"><label class="block text-sm mb-1.5">Phone</label><input name="addr_phone" value="<%= a.phone || '' %>" class="field"></div>
+      <div class="sm:col-span-2"><label class="block text-sm mb-1.5">Address line 1</label><input name="addr_line1" value="<%= a.line1 || '' %>" class="field"></div>
+      <div class="sm:col-span-2"><label class="block text-sm mb-1.5">Address line 2</label><input name="addr_line2" value="<%= a.line2 || '' %>" class="field"></div>
+      <div><label class="block text-sm mb-1.5">City</label><input name="addr_city" value="<%= a.city || '' %>" class="field"></div>
+      <div><label class="block text-sm mb-1.5">State</label><input name="addr_state" value="<%= a.state || '' %>" class="field"></div>
+      <div><label class="block text-sm mb-1.5">Postal code</label><input name="addr_postalCode" value="<%= a.postalCode || '' %>" class="field"></div>
+      <div><label class="block text-sm mb-1.5">Country</label><input name="addr_country" value="<%= a.country || 'India' %>" class="field"></div>
+    </div>
+    <p class="text-xs text-neutral-500">Leave the address blank to remove your saved address. It is pre-filled at checkout.</p>
+    <button type="submit" class="bg-black text-white px-10 py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition disabled:opacity-60">SAVE CHANGES</button>
+  </form>
+</div>
+<%- include('../partials/footer') %>

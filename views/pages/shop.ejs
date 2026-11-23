@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+    <div>
+      <h1 class="font-serif text-5xl">Shop</h1>
+      <p id="result-count" class="text-sm text-neutral-500 mt-1"><%= products.length %> <%= products.length === 1 ? 'item' : 'items' %></p>
+    </div>
+    <button type="button" id="filter-toggle" class="lg:hidden border border-neutral-300 px-4 py-2 text-sm">Filters</button>
+  </div>
+
+  <div class="grid lg:grid-cols-[240px_1fr] gap-10">
+    <!-- ================= FILTERS ================= -->
+    <form id="filter-form" action="/shop" method="get" class="hidden lg:block space-y-8 text-sm">
+      <div>
+        <label class="block font-medium mb-2" for="f-search">Search</label>
+        <input id="f-search" type="search" name="search" value="<%= selected.search %>" placeholder="Search products…"
+               class="w-full border border-neutral-300 px-3 py-2 outline-none focus:border-black">
+      </div>
+
+      <div>
+        <label class="block font-medium mb-2" for="f-sort">Sort by</label>
+        <select id="f-sort" name="sort" class="w-full border border-neutral-300 px-3 py-2 bg-white outline-none focus:border-black">
+          <% [['newest','Newest'],['price_asc','Price: Low to High'],['price_desc','Price: High to Low'],['rating','Top Rated']].forEach(function (o) { %>
+            <option value="<%= o[0] %>" <%= selected.sort === o[0] ? 'selected' : '' %>><%= o[1] %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Category</p>
+        <div class="space-y-1.5">
+          <% options.categories.forEach(function (c) { %>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="categories" value="<%= c %>" class="accent-black" <%= selected.categories.includes(c) ? 'checked' : '' %>> <%= c %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Size</p>
+        <div class="flex flex-wrap gap-2">
+          <% options.sizes.forEach(function (s) { %>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="sizes" value="<%= s %>" class="peer sr-only" <%= selected.sizes.includes(s) ? 'checked' : '' %>>
+              <span class="inline-block border border-neutral-300 px-2.5 py-1 text-xs peer-checked:bg-black peer-checked:text-white peer-checked:border-black"><%= s %></span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Color</p>
+        <div class="flex flex-wrap gap-2">
+          <% options.colors.forEach(function (c) { %>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="colors" value="<%= c %>" class="peer sr-only" <%= selected.colors.includes(c) ? 'checked' : '' %>>
+              <span class="inline-block border border-neutral-300 px-2.5 py-1 text-xs peer-checked:bg-black peer-checked:text-white peer-checked:border-black"><%= c %></span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Price range</p>
+        <div class="flex items-center gap-2">
+          <input type="number" min="0" name="minPrice" value="<%= selected.minPrice %>" placeholder="<%= options.minPrice %>" aria-label="Minimum price"
+                 class="w-full border border-neutral-300 px-2 py-2 outline-none focus:border-black">
+          <span>–</span>
+          <input type="number" min="0" name="maxPrice" value="<%= selected.maxPrice %>" placeholder="<%= options.maxPrice %>" aria-label="Maximum price"
+                 class="w-full border border-neutral-300 px-2 py-2 outline-none focus:border-black">
+        </div>
+      </div>
+
+      <button type="button" id="clear-filters" class="text-xs underline underline-offset-4 text-neutral-500 hover:text-black">Clear all filters</button>
+    </form>
+
+    <!-- ================= PRODUCT GRID ================= -->
+    <div id="product-grid" class="grid grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-10 content-start">
+      <%- include('../partials/product-grid') %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

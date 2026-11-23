@@ -1,0 +1,27 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<div class="max-w-md mx-auto px-4 py-16">
+  <h1 class="font-serif text-5xl text-center mb-2">Welcome back</h1>
+  <p class="text-center text-sm text-neutral-500 mb-10">Log in to see your orders, wishlist and saved address.</p>
+
+  <% if (error) { %><div class="mb-5 border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3"><%= error %></div><% } %>
+
+  <form action="/login" method="post" class="space-y-5">
+    <input type="hidden" name="next" value="<%= next %>">
+    <div>
+      <label for="email" class="block text-sm mb-1.5">Email</label>
+      <input id="email" type="email" name="email" value="<%= email %>" required autocomplete="email"
+             class="w-full border border-neutral-300 px-4 py-3 outline-none focus:border-black">
+    </div>
+    <div>
+      <label for="password" class="block text-sm mb-1.5">Password</label>
+      <input id="password" type="password" name="password" required autocomplete="current-password"
+             class="w-full border border-neutral-300 px-4 py-3 outline-none focus:border-black">
+    </div>
+    <button type="submit" class="w-full bg-black text-white py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition">LOG IN</button>
+  </form>
+
+  <p class="text-center text-sm text-neutral-500 mt-6">New to AURA? <a class="text-black underline underline-offset-4" href="/signup<%= next ? '?next=' + encodeURIComponent(next) : '' %>">Create an account</a></p>
+  <p class="text-center text-xs text-neutral-400 mt-6">Demo: demo@aura.com / Demo@123</p>
+</div>
+<%- include('../partials/footer') %>

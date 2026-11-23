@@ -1,0 +1,125 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%
+  const hasSizes = product.sizes.length > 0;
+  const hasColors = product.colors.length > 0;
+  const soldOut = product.stockCount <= 0;
+  const onSale = product.discountPrice !== null;
+  const off = onSale ? Math.round((1 - product.discountPrice / product.price) * 100) : 0;
+%>
+<div id="product-page" class="max-w-7xl mx-auto px-4 sm:px-6 py-10"
+     data-product-id="<%= product.id %>" data-has-sizes="<%= hasSizes %>" data-has-colors="<%= hasColors %>"
+     data-default-color="<%= product.colors.length === 1 ? product.colors[0] : '' %>" data-stock="<%= product.stockCount %>">
+
+  <nav class="text-xs text-neutral-500 mb-6">
+    <a href="/shop" class="hover:text-black">Shop</a> /
+    <a href="/shop?categories=<%= encodeURIComponent(product.category) %>" class="hover:text-black"><%= product.category %></a> /
+    <span class="text-black"><%= product.name %></span>
+  </nav>
+
+  <div class="grid md:grid-cols-2 gap-10 lg:gap-16">
+    <!-- ===== Gallery ===== -->
+    <div class="flex flex-col-reverse sm:flex-row gap-4">
+      <div class="flex sm:flex-col gap-3">
+        <% product.images.forEach(function (img, i) { %>
+          <button type="button" data-thumb data-src="<%= img %>"
+                  class="w-16 h-20 border bg-neutral-100 overflow-hidden <%= i === 0 ? 'border-black' : 'border-transparent' %>">
+            <img src="<%= img %>" alt="<%= product.name %> view <%= i + 1 %>" onerror="this.onerror=null;this.src='/img/placeholder.svg'" class="w-full h-full object-cover">
+          </button>
+        <% }) %>
+      </div>
+      <div class="flex-1 aspect-[3/4] bg-neutral-100 overflow-hidden">
+        <img id="main-image" src="<%= product.images[0] %>" alt="<%= product.name %>"
+             onerror="this.onerror=null;this.src='/img/placeholder.svg'" class="w-full h-full object-cover">
+      </div>
+    </div>
+
+    <!-- ===== Details ===== -->
+    <div>
+      <p class="text-xs tracking-[0.3em] text-neutral-500 uppercase"><%= product.category %></p>
+      <h1 class="font-serif text-4xl sm:text-5xl mt-2"><%= product.name %></h1>
+      <p class="text-sm text-neutral-500 mt-2">★ <%= product.rating.toFixed(1) %></p>
+
+      <p class="text-2xl mt-5">
+        <% if (onSale) { %>
+          <span><%= money(product.discountPrice) %></span>
+          <span class="text-neutral-400 line-through text-lg ml-2"><%= money(product.price) %></span>
+          <span class="text-xs bg-black text-white px-2 py-1 ml-2 align-middle tracking-widest"><%= off %>% OFF</span>
+        <% } else { %>
+          <%= money(product.price) %>
+        <% } %>
+      </p>
+
+      <p class="mt-4 text-sm">
+        <% if (soldOut) { %>
+          <span class="text-red-600">● Out of stock</span>
+        <% } else if (product.stockCount <= 5) { %>
+          <span class="text-amber-600">● Only <%= product.stockCount %> left</span>
+        <% } else { %>
+          <span class="text-green-700">● In stock</span>
+        <% } %>
+      </p>
+
+      <p class="mt-6 text-sm text-neutral-600 leading-relaxed"><%= product.description %></p>
+
+      <% if (hasColors) { %>
+        <div class="mt-8">
+          <p class="text-sm font-medium mb-2">Color: <span id="color-label" class="font-normal text-neutral-500"><%= product.colors.length === 1 ? product.colors[0] : 'Select' %></span></p>
+          <div class="flex flex-wrap gap-2">
+            <% product.colors.forEach(function (c) { %>
+              <button type="button" data-color="<%= c %>"
+                      class="option-btn border px-4 py-2 text-sm hover:border-black <%= product.colors.length === 1 ? 'is-selected' : 'border-neutral-300' %>"><%= c %></button>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <% if (hasSizes) { %>
+        <div class="mt-6">
+          <p class="text-sm font-medium mb-2">Size: <span id="size-label" class="font-normal text-neutral-500">Select</span></p>
+          <div id="size-options" class="flex flex-wrap gap-2">
+            <% product.sizes.forEach(function (s) { %>
+              <button type="button" data-size="<%= s %>" class="option-btn border border-neutral-300 min-w-[48px] px-3 py-2 text-sm hover:border-black"><%= s %></button>
+            <% }) %>
+          </div>
+          <p id="size-error" class="hidden text-red-600 text-xs mt-2">Please select a size to continue.</p>
+        </div>
+      <% } %>
+
+      <div class="mt-8 flex items-center gap-3">
+        <div class="flex items-center border border-neutral-300">
+          <button type="button" id="qty-dec" class="w-10 h-12 text-lg hover:bg-neutral-100" aria-label="Decrease quantity">−</button>
+          <input id="qty" type="number" value="1" min="1" max="<%= Math.min(10, Math.max(product.stockCount, 1)) %>" readonly
+                 class="w-10 text-center outline-none bg-transparent" aria-label="Quantity">
+          <button type="button" id="qty-inc" class="w-10 h-12 text-lg hover:bg-neutral-100" aria-label="Increase quantity">+</button>
+        </div>
+        <button type="button" id="add-to-cart" <%= soldOut ? 'disabled' : '' %>
+                class="flex-1 h-12 bg-black text-white text-sm tracking-widest hover:bg-neutral-800 transition disabled:bg-neutral-300 disabled:cursor-not-allowed">
+          <%= soldOut ? 'SOLD OUT' : 'ADD TO CART' %>
+        </button>
+        <button type="button" data-wishlist="<%= product.id %>" aria-label="Toggle wishlist"
+                class="heart-btn w-12 h-12 border border-neutral-300 flex items-center justify-center hover:border-black <%= wishlisted ? 'is-active' : '' %>">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6.6 5.5 5.5 0 0 1 21.5 12C19 16.4 12 21 12 21z"/></svg>
+        </button>
+      </div>
+
+      <ul class="mt-8 text-xs text-neutral-500 space-y-1.5 border-t border-neutral-200 pt-5">
+        <li>Free shipping on every order</li>
+        <li>Easy 30-day returns (demo)</li>
+      </ul>
+    </div>
+  </div>
+
+  <% if (related.length) { %>
+    <section class="mt-24">
+      <h2 class="font-serif text-3xl mb-8">You may also like</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10">
+        <% related.forEach(function (p) { %>
+          <%- include('../partials/product-card', { product: p }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

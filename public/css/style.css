@@ -1,0 +1,53 @@
+/* Small additions on top of Tailwind (CDN) */
+html { scroll-behavior: smooth; }
+summary::-webkit-details-marker { display: none; }
+
+/* Form fields used on checkout / account / admin */
+.field {
+  width: 100%;
+  border: 1px solid #d4d4d4;
+  padding: 0.7rem 0.9rem;
+  outline: none;
+  background: #fff;
+  font-size: 0.875rem;
+  transition: border-color 0.15s;
+}
+.field:focus { border-color: #000; }
+.field.is-invalid { border-color: #dc2626; }
+
+/* Product option buttons (size / color) */
+.option-btn.is-selected { background: #000; color: #fff; border-color: #000; }
+.option-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.shake { animation: shake 0.35s; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+/* Wishlist heart */
+.heart-btn.is-active { color: #dc2626; }
+.heart-btn.is-active svg { fill: currentColor; }
+
+/* Checkout stepper */
+.step-dot { color: #a3a3a3; }
+.step-dot.is-current { color: #000; font-weight: 600; }
+.step-dot.is-done { color: #16a34a; }
+
+/* Admin tabs */
+.tab-btn { padding: 0.5rem 1rem; border: 1px solid #d4d4d4; }
+.tab-btn.is-active { background: #000; color: #fff; border-color: #000; }
+
+/* Toasts */
+.toast {
+  pointer-events: auto;
+  min-width: 220px;
+  max-width: 340px;
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  color: #fff;
+  background: #171717;
+  border-left: 4px solid #a3a3a3;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: toast-in 0.25s ease-out;
+}
+.toast.success { border-left-color: #22c55e; }
+.toast.error { border-left-color: #ef4444; }
+.toast.leaving { opacity: 0; transform: translateX(16px); transition: all 0.25s; }
+@keyframes toast-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }

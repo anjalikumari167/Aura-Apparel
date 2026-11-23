@@ -1,0 +1,98 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<% const a = currentUser.defaultAddress || {}; %>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+  <h1 class="font-serif text-5xl mb-8">Checkout</h1>
+
+  <!-- stepper -->
+  <ol class="flex items-center gap-3 text-xs tracking-widest mb-10">
+    <li data-step-indicator="1" class="step-dot is-current">1 &nbsp;SHIPPING</li>
+    <li class="h-px w-10 bg-neutral-300"></li>
+    <li data-step-indicator="2" class="step-dot">2 &nbsp;PAYMENT</li>
+    <li class="h-px w-10 bg-neutral-300"></li>
+    <li class="step-dot">3 &nbsp;CONFIRMATION</li>
+  </ol>
+
+  <div class="grid lg:grid-cols-[1fr_380px] gap-12">
+    <div>
+      <!-- ============ STEP 1: SHIPPING ============ -->
+      <form id="shipping-form" class="space-y-5" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2"><label class="block text-sm mb-1.5" for="s-name">Full name</label>
+            <input id="s-name" name="name" required value="<%= a.name || currentUser.name %>" autocomplete="name" class="field"></div>
+          <div class="sm:col-span-2"><label class="block text-sm mb-1.5" for="s-phone">Phone</label>
+            <input id="s-phone" name="phone" required value="<%= a.phone || currentUser.phone || '' %>" autocomplete="tel" class="field"></div>
+          <div class="sm:col-span-2"><label class="block text-sm mb-1.5" for="s-line1">Address line 1</label>
+            <input id="s-line1" name="line1" required value="<%= a.line1 || '' %>" autocomplete="address-line1" class="field"></div>
+          <div class="sm:col-span-2"><label class="block text-sm mb-1.5" for="s-line2">Address line 2 <span class="text-neutral-400">(optional)</span></label>
+            <input id="s-line2" name="line2" value="<%= a.line2 || '' %>" autocomplete="address-line2" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="s-city">City</label>
+            <input id="s-city" name="city" required value="<%= a.city || '' %>" autocomplete="address-level2" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="s-state">State</label>
+            <input id="s-state" name="state" required value="<%= a.state || '' %>" autocomplete="address-level1" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="s-postal">Postal code</label>
+            <input id="s-postal" name="postalCode" required value="<%= a.postalCode || '' %>" autocomplete="postal-code" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="s-country">Country</label>
+            <input id="s-country" name="country" required value="<%= a.country || 'India' %>" autocomplete="country-name" class="field"></div>
+        </div>
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="save-address" class="accent-black" checked> Save this as my default address</label>
+        <button type="button" id="to-payment" class="bg-black text-white px-10 py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition">CONTINUE TO PAYMENT</button>
+      </form>
+
+      <!-- ============ STEP 2: PAYMENT (simulated) ============ -->
+      <form id="payment-form" class="space-y-6 hidden" novalidate>
+        <div class="border border-amber-200 bg-amber-50 text-amber-900 text-xs px-4 py-3">
+          Demo store: no real payment is taken and card details are never sent or stored. Test card: 4242 4242 4242 4242.
+        </div>
+        <div class="space-y-2">
+          <% paymentMethods.forEach(function (m, i) { %>
+            <label class="flex items-center gap-3 border border-neutral-300 px-4 py-3.5 cursor-pointer has-[:checked]:border-black">
+              <input type="radio" name="payment" value="<%= m %>" class="accent-black" <%= i === 0 ? 'checked' : '' %>> <span class="text-sm"><%= m %></span>
+            </label>
+          <% }) %>
+        </div>
+        <div id="card-fields" class="grid sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2"><label class="block text-sm mb-1.5" for="c-number">Card number</label>
+            <input id="c-number" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="23" autocomplete="off" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="c-exp">Expiry (MM/YY)</label>
+            <input id="c-exp" placeholder="12/29" maxlength="5" autocomplete="off" class="field"></div>
+          <div><label class="block text-sm mb-1.5" for="c-cvv">CVV</label>
+            <input id="c-cvv" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="off" class="field"></div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button type="button" id="back-to-shipping" class="border border-neutral-300 px-8 py-3.5 text-sm tracking-widest hover:border-black transition">BACK</button>
+          <button type="button" id="place-order" class="flex-1 bg-black text-white py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition disabled:opacity-60">
+            PAY <%= money(cart.total) %> &amp; PLACE ORDER
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ============ ORDER SUMMARY ============ -->
+    <aside class="bg-neutral-50 p-6 h-fit lg:sticky lg:top-24">
+      <h2 class="font-serif text-2xl mb-5">Order summary</h2>
+      <ul class="divide-y divide-neutral-200">
+        <% cart.items.forEach(function (i) { %>
+          <li class="flex gap-3 py-3">
+            <img src="<%= i.image %>" alt="" onerror="this.onerror=null;this.src='/img/placeholder.svg'" class="w-14 h-[72px] object-cover bg-neutral-200">
+            <div class="flex-1 text-sm">
+              <p><%= i.name %></p>
+              <p class="text-xs text-neutral-500"><%= [i.size, i.color].filter(Boolean).join(' · ') %> · Qty <%= i.quantity %></p>
+            </div>
+            <p class="text-sm"><%= money(i.lineTotal) %></p>
+          </li>
+        <% }) %>
+      </ul>
+      <dl class="text-sm space-y-1.5 mt-4 pt-4 border-t border-neutral-200">
+        <div class="flex justify-between"><dt class="text-neutral-500">Subtotal</dt><dd><%= money(cart.subtotal) %></dd></div>
+        <% if (cart.promo) { %>
+          <div class="flex justify-between text-green-700"><dt>Promo <%= cart.promo.code %> (<%= cart.promo.percent %>%)</dt><dd>−<%= money(cart.discount) %></dd></div>
+        <% } %>
+        <div class="flex justify-between text-neutral-500"><dt>Shipping</dt><dd>Free</dd></div>
+        <div class="flex justify-between text-base font-medium pt-2 border-t border-neutral-200"><dt>Total</dt><dd><%= money(cart.total) %></dd></div>
+      </dl>
+      <% if (!cart.promo) { %><p class="text-xs text-neutral-500 mt-4">Have a code? Apply it in your cart before paying.</p><% } %>
+    </aside>
+  </div>
+</div>
+<%- include('../partials/footer', { scripts: ['/js/checkout.js'] }) %>

@@ -1,0 +1,21 @@
+<div id="cart-overlay" class="fixed inset-0 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
+<aside id="cart-drawer" aria-label="Shopping cart" aria-hidden="true"
+       class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+  <div class="flex items-center justify-between px-6 h-16 border-b border-neutral-200">
+    <h2 class="font-serif text-2xl">Your Cart <span class="text-sm font-sans text-neutral-500">(<span data-cart-count-text>0</span>)</span></h2>
+    <button type="button" id="close-cart" class="text-3xl leading-none hover:opacity-60" aria-label="Close cart">&times;</button>
+  </div>
+
+  <div id="cart-items" class="flex-1 overflow-y-auto px-6 py-2"></div>
+
+  <div id="cart-footer" class="border-t border-neutral-200 px-6 py-5 space-y-4 hidden">
+    <div id="promo-area"></div>
+    <dl class="text-sm space-y-1.5">
+      <div class="flex justify-between"><dt class="text-neutral-500">Subtotal</dt><dd id="cart-subtotal"></dd></div>
+      <div id="cart-discount-row" class="flex justify-between text-green-700 hidden"><dt>Discount</dt><dd id="cart-discount"></dd></div>
+      <div class="flex justify-between text-neutral-500"><dt>Shipping</dt><dd>Free</dd></div>
+      <div class="flex justify-between text-base font-medium pt-2 border-t border-neutral-200"><dt>Total</dt><dd id="cart-total"></dd></div>
+    </dl>
+    <a id="checkout-link" href="/checkout" class="block text-center bg-black text-white py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition">CHECKOUT</a>
+  </div>
+</aside>

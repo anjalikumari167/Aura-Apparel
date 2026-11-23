@@ -1,0 +1,36 @@
+</main>
+<footer class="border-t border-neutral-200 mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid gap-8 sm:grid-cols-3 text-sm">
+    <div>
+      <p class="font-serif text-2xl tracking-[0.25em] mb-3">AURA</p>
+      <p class="text-neutral-500 max-w-xs">Modern essentials, made to last. A demo store built for an internship project with Node.js, Express and MySQL.</p>
+    </div>
+    <div>
+      <p class="font-medium mb-3">Shop</p>
+      <ul class="space-y-2 text-neutral-500">
+        <li><a class="hover:text-black" href="/shop">All products</a></li>
+        <li><a class="hover:text-black" href="/shop?sort=newest">New arrivals</a></li>
+        <li><a class="hover:text-black" href="/shop?sort=rating">Top rated</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-medium mb-3">Account</p>
+      <ul class="space-y-2 text-neutral-500">
+        <li><a class="hover:text-black" href="/orders">My orders</a></li>
+        <li><a class="hover:text-black" href="/wishlist">Wishlist</a></li>
+        <li><a class="hover:text-black" href="/account">Saved address</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="text-center text-xs text-neutral-400 pb-8">© <%= new Date().getFullYear() %> AURA APPAREL · Demo store — payments are simulated.</p>
+</footer>
+
+<%- include('cart-drawer') %>
+<div id="toast-root" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script src="/js/main.js"></script>
+<% (locals.scripts || []).forEach(function (src) { %>
+<script src="<%= src %>"></script>
+<% }) %>
+</body>
+</html>

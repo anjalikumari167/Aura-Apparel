@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+  <h1 class="font-serif text-5xl mb-8">My orders</h1>
+
+  <% if (!orders.length) { %>
+    <div class="text-center py-20 border border-dashed border-neutral-300">
+      <p class="font-serif text-3xl mb-2">No orders yet</p>
+      <p class="text-sm text-neutral-500 mb-6">When you place an order it will show up here.</p>
+      <a href="/shop" class="inline-block bg-black text-white px-8 py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition">START SHOPPING</a>
+    </div>
+  <% } else { %>
+    <div class="space-y-6">
+      <% orders.forEach(function (o) { %>
+        <article class="border border-neutral-200">
+          <header class="flex flex-wrap items-center justify-between gap-3 bg-neutral-50 px-5 py-4 text-sm">
+            <div class="flex flex-wrap gap-x-8 gap-y-1">
+              <div><p class="text-xs text-neutral-500">ORDER</p><p class="font-medium">#<%= o.id %></p></div>
+              <div><p class="text-xs text-neutral-500">PLACED</p><p><%= fmtDate(o.createdAt) %></p></div>
+              <div><p class="text-xs text-neutral-500">TOTAL</p><p class="font-medium"><%= money(o.totalAmount) %></p></div>
+            </div>
+            <span class="px-3 py-1 text-xs font-medium rounded-full <%= statusClass[o.status] || 'bg-neutral-100' %>"><%= o.status %></span>
+          </header>
+          <ul class="divide-y divide-neutral-100">
+            <% o.items.forEach(function (i) { %>
+              <li class="flex gap-4 p-4">
+                <img src="<%= i.product && i.product.images[0] ? i.product.images[0] : '/img/placeholder.svg' %>" alt="" onerror="this.onerror=null;this.src='/img/placeholder.svg'" class="w-14 h-[72px] object-cover bg-neutral-100">
+                <div class="flex-1 text-sm">
+                  <a href="/product/<%= i.productId %>" class="hover:underline"><%= i.productName %></a>
+                  <p class="text-xs text-neutral-500 mt-0.5"><%= [i.size, i.color].filter(Boolean).join(' · ') %> · Qty <%= i.quantity %></p>
+                </div>
+                <p class="text-sm"><%= money(i.lineTotal) %></p>
+              </li>
+            <% }) %>
+          </ul>
+          <footer class="px-5 py-3 text-xs text-neutral-500 border-t border-neutral-100">
+            Ship to: <%= o.shippingAddress.name %>, <%= o.shippingAddress.city %> · <%= o.paymentMethod %>
+            <% if (o.discountApplied > 0) { %> · Saved <%= money(o.discountApplied) %> with <%= o.promoCode %><% } %>
+          </footer>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>

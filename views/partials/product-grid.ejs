@@ -1,0 +1,11 @@
+<div data-count="<%= products.length %>" class="hidden"></div>
+<% if (!products.length) { %>
+  <div class="col-span-full text-center py-24">
+    <p class="font-serif text-3xl mb-2">No products found</p>
+    <p class="text-neutral-500 text-sm">Try removing a filter or searching for something else.</p>
+  </div>
+<% } else { %>
+  <% products.forEach(function (product) { %>
+    <%- include('product-card', { product: product }) %>
+  <% }) %>
+<% } %>

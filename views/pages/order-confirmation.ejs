@@ -1,0 +1,48 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<% const s = order.shippingAddress; %>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-14">
+  <ol class="flex items-center justify-center gap-3 text-xs tracking-widest mb-10 text-neutral-400">
+    <li>1 &nbsp;SHIPPING</li><li class="h-px w-10 bg-neutral-300"></li><li>2 &nbsp;PAYMENT</li><li class="h-px w-10 bg-neutral-300"></li><li class="text-black font-medium">3 &nbsp;CONFIRMATION</li>
+  </ol>
+
+  <div class="text-center">
+    <div class="mx-auto w-14 h-14 rounded-full bg-black text-white flex items-center justify-center text-2xl">✓</div>
+    <h1 class="font-serif text-5xl mt-5">Thank you, <%= currentUser.name.split(' ')[0] %>.</h1>
+    <p class="text-neutral-500 mt-2">Your order <strong class="text-black">#<%= order.id %></strong> has been placed and is now <strong class="text-black"><%= order.status %></strong>.</p>
+  </div>
+
+  <div class="mt-10 border border-neutral-200">
+    <ul class="divide-y divide-neutral-200">
+      <% order.items.forEach(function (i) { %>
+        <li class="flex gap-4 p-4">
+          <img src="<%= i.product && i.product.images[0] ? i.product.images[0] : '/img/placeholder.svg' %>" alt="" onerror="this.onerror=null;this.src='/img/placeholder.svg'" class="w-16 h-20 object-cover bg-neutral-100">
+          <div class="flex-1 text-sm">
+            <p><%= i.productName %></p>
+            <p class="text-xs text-neutral-500 mt-0.5"><%= [i.size, i.color].filter(Boolean).join(' · ') %> · Qty <%= i.quantity %></p>
+          </div>
+          <p class="text-sm"><%= money(i.lineTotal) %></p>
+        </li>
+      <% }) %>
+    </ul>
+    <dl class="text-sm p-4 bg-neutral-50 space-y-1.5">
+      <% if (order.discountApplied > 0) { %>
+        <div class="flex justify-between text-green-700"><dt>Discount <%= order.promoCode ? '(' + order.promoCode + ')' : '' %></dt><dd>−<%= money(order.discountApplied) %></dd></div>
+      <% } %>
+      <div class="flex justify-between text-base font-medium"><dt>Total paid</dt><dd><%= money(order.totalAmount) %></dd></div>
+    </dl>
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-6 mt-8 text-sm">
+    <div><p class="font-medium mb-1">Shipping to</p>
+      <p class="text-neutral-600"><%= s.name %><br><%= s.line1 %><%= s.line2 ? ', ' + s.line2 : '' %><br><%= s.city %>, <%= s.state %> <%= s.postalCode %><br><%= s.country %></p></div>
+    <div><p class="font-medium mb-1">Payment</p><p class="text-neutral-600"><%= order.paymentMethod %></p>
+      <p class="font-medium mt-3 mb-1">Placed on</p><p class="text-neutral-600"><%= fmtDate(order.createdAt) %></p></div>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4 mt-10">
+    <a href="/orders" class="bg-black text-white px-8 py-3.5 text-sm tracking-widest hover:bg-neutral-800 transition">VIEW MY ORDERS</a>
+    <a href="/shop" class="border border-neutral-300 px-8 py-3.5 text-sm tracking-widest hover:border-black transition">CONTINUE SHOPPING</a>
+  </div>
+</div>
+<%- include('../partials/footer') %>
