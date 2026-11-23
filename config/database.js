@@ -4,6 +4,7 @@
 // =====================================================================
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
+const mysql2 = require('mysql2');
 
 const dialect = (process.env.DB_DIALECT || 'mysql').toLowerCase();
 if (!['mysql', 'postgres'].includes(dialect)) {
@@ -22,6 +23,7 @@ const options = {
   host: settings.host,
   port: settings.port,
   dialect,
+    dialectModule: dialect === 'mysql' ? mysql2 : undefined,
   logging: process.env.DB_LOGGING === 'true' ? console.log : false,
   pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
 };
