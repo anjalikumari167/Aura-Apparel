@@ -24,6 +24,9 @@ const options = {
   port: settings.port,
   dialect,
     dialectModule: dialect === 'mysql' ? mysql2 : undefined,
+      dialectOptions: dialect === 'mysql' && process.env.DB_SSL === 'true'
+    ? { ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true } }
+    : {},
   logging: process.env.DB_LOGGING === 'true' ? console.log : false,
   pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
 };
@@ -31,6 +34,7 @@ if (dialect === 'mysql') options.timezone = '+00:00'; // store all dates in UTC
 
 const sequelize = new Sequelize(settings.database, settings.user, settings.password, options);
 
+    
 /** MySQL only: create the database if it doesn't exist yet (saves a manual step). */
 async function ensureDatabase() {
   if (dialect !== 'mysql') return; // for PostgreSQL create the DB manually: createdb aura_apparel
@@ -43,6 +47,7 @@ async function ensureDatabase() {
     port: settings.port,
     user: settings.user,
     password: settings.password,
+        ssl: process.env.DB_SSL === 'true' ? { minVersion: 'TLSv1.2', rejectUnauthorized: true } : undefined,
   });
   await conn.query(
     `CREATE DATABASE IF NOT EXISTS \`${settings.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
