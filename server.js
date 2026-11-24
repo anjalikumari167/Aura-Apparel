@@ -39,6 +39,15 @@ const sessionStore = new SequelizeStore({
   checkExpirationInterval: 15 * 60 * 1000,
   expiration: 7 * 24 * 60 * 60 * 1000,
 });
+// On Vercel: make sure the database is ready before each request
+app.use(async (req, res, next) => {
+  try {
+    await init();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'dev-only-secret',
@@ -104,15 +113,30 @@ app.use((err, req, res, next) => {
 });
 
 // ---------- start ----------
-(async () => {
-  try {
-    await connectDB();
-    // Create any missing tables (never drops data). `npm run seed` is what resets everything.
-    await sequelize.sync();
-    await sessionStore.sync();
-    app.listen(PORT, () => console.log(`✔ AURA APPAREL running at http://localhost:${PORT}`));
-  } catch (err) {
-    console.error('✘ Server failed to start:', err.message);
-    process.exit(1);
+let ready;
+function init() {
+  if (!ready) {
+    ready = (async () => {
+      await connectDB();
+      // Create any missing tables (never drops data). `npm run seed` is what resets everything
+      await sequelize.sync();
+      await sessionStore.sync();
+    })();
   }
-})();
+  return ready;
+}
+
+
+// Locally: start the server like before
+if (!process.env.VERCEL) {
+  init()
+    .then(() => {
+      app.listen(PORT, () => console.log(`✓ AURA APPAREL running at http://localhost:${PORT}`));
+    })
+    .catch((err) => {
+      console.error('✗ Server failed to start:', err.message);
+      process.exit(1);
+    });
+}
+
+module.exports = app; // for testing
